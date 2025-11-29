@@ -48,6 +48,41 @@ Access the application:
 - **Swagger UI**: http://localhost:8881/swagger-ui.html
 - **Health Check**: http://localhost:8881/actuator/health
 
+
+## 📖 API Documentation
+
+### Swagger/OpenAPI
+
+Interactive API documentation is available via Swagger UI:
+
+**Local Development:**
+```
+http://localhost:8881/swagger-ui.html
+```
+
+**Kubernetes/Minikube:**
+```
+http://<service-url>/swagger-ui.html
+```
+```
+
+### API Endpoints
+
+#### Book Management
+- `POST /v1/book/register` - Register a new book
+- `GET /v1/book/getall` - Get all books
+- `POST /v1/book/borrow` - Borrow a book
+- `POST /v1/book/{bookId}/return` - Return a borrowed book
+
+#### Borrower Management
+- `POST /v1/borrower/register` - Register a new borrower
+
+#### Health & Monitoring
+- `GET /actuator/health` - Application health
+- `GET /actuator/health/liveness` - Liveness probe
+- `GET /actuator/health/readiness` - Readiness probe
+- `GET /actuator/metrics` - Application metrics
+
 ### Docker Quick Start
 
 ```bash
@@ -183,40 +218,6 @@ kubectl port-forward deployment/library-app 8080:8080
 kubectl delete -f k8s/library-app.yaml
 
 ```
-
-## 📖 API Documentation
-
-### Swagger/OpenAPI
-
-Interactive API documentation is available via Swagger UI:
-
-**Local Development:**
-```
-http://localhost:8881/swagger-ui.html
-```
-
-**Kubernetes/Minikube:**
-```
-http://<service-url>/swagger-ui.html
-```
-```
-
-### API Endpoints
-
-#### Book Management
-- `POST /v1/book/register` - Register a new book
-- `GET /v1/book/getall` - Get all books
-- `POST /v1/book/borrow` - Borrow a book
-- `POST /v1/book/{bookId}/return` - Return a borrowed book
-
-#### Borrower Management
-- `POST /v1/borrower/register` - Register a new borrower
-
-#### Health & Monitoring
-- `GET /actuator/health` - Application health
-- `GET /actuator/health/liveness` - Liveness probe
-- `GET /actuator/health/readiness` - Readiness probe
-- `GET /actuator/metrics` - Application metrics
 
 ### Environment Variables
 
