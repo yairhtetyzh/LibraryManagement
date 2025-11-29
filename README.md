@@ -32,8 +32,8 @@
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/library-management-system.git
-cd library-management-system
+git clone https://github.com/yairhtetyzh/LibraryManagement.git
+cd LibraryManagement
 
 # Run with Maven (uses dev profile by default)
 ./mvnw spring-boot:run
