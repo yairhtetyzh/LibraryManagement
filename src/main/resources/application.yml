@@ -1,0 +1,66 @@
+spring:
+  application:
+    name: library
+  lifecycle:
+    timeout-per-shutdown-phase: 30s  
+
+  datasource:
+    url: ${DB_URL:jdbc:mysql://localhost:3306/library?createDatabaseIfNotExist=true&characterEncoding=utf8&collation=utf8_general_ci}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:root}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    generate-ddl: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect
+
+server:
+  port: ${SERVER_PORT:8881}
+  shutdown: graceful
+
+logging:
+  level:
+    root: INFO
+    com.book.library: INFO
+    org.springframework.web: INFO
+    org.hibernate.SQL: INFO
+    org.hibernate.type.descriptor.sql.BasicBinder: INFO
+    
+# Swagger/OpenAPI Configuration
+swagger:
+  info:
+    title: ${SWAGGER_TITLE:Book Library Management API}
+    version: ${SWAGGER_VERSION:1.0.0}
+    description: |
+      This API provides endpoints for managing books, borrowers, and borrowing history in a library system.
+      It allows users to register books, manage borrowers, borrow and return books, and retrieve library information.
+  contact:
+    name: ${SWAGGER_CONTACT_NAME:Book Library Support}
+    email: ${SWAGGER_CONTACT_EMAIL:support@booklibrary.com}
+    url: ${SWAGGER_CONTACT_URL:https://www.booklibrary.com}
+  license:
+    name: ${SWAGGER_LICENSE_NAME:MIT License}
+    url: ${SWAGGER_LICENSE_URL:https://opensource.org/licenses/MIT}
+  servers:
+    - url: ${DEV_SERVER_URL:http://localhost:8881}
+      description: ${DEV_SERVER_DESC:Development Server}
+    - url: ${PROD_SERVER_URL:https://api.booklibrary.com}
+      description: ${PROD_SERVER_DESC:Production Server}
+
+# SpringDoc Configuration
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: alpha
+    tags-sorter: alpha
+    try-it-out-enabled: true
+    filter: true
+  api-docs:
+    path: /v3/api-docs
+  show-actuator: false 

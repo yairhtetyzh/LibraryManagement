@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <!-- Read Spring values -->
+    <springProperty scope="context" name="app" source="spring.application.name" defaultValue="library"/>
+    <springProperty scope="context" name="env" source="spring.profiles.active" defaultValue="default"/>
+
+    <!-- =============== STANDARD CONSOLE LOGGING =============== -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>
+                %d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <!-- =============== JSON LOGGING =============== -->
+    <appender name="JSON_STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <providers>
+
+                <timestamp>
+                    <fieldName>timestamp</fieldName>
+                </timestamp>
+
+                <loggerName>
+                    <fieldName>logger</fieldName>
+                </loggerName>
+
+                <logLevel>
+                    <fieldName>level</fieldName>
+                </logLevel>
+
+                <threadName>
+                    <fieldName>thread</fieldName>
+                </threadName>
+
+                <mdc/>
+
+                <message>
+                    <fieldName>message</fieldName>
+                </message>
+
+                <stackTrace>
+                    <fieldName>stack_trace</fieldName>
+                </stackTrace>
+
+                <!-- Custom Metadata -->
+                <pattern>
+                    <pattern>
+                        {
+                          "app": "${app:-unknown}",
+                          "env": "${env:-default}",
+                          "hostname": "${HOSTNAME:-unknown}",
+                          "instance_id": "${INSTANCE_ID:-unknown}"
+                        }
+                    </pattern>
+                </pattern>
+
+            </providers>
+        </encoder>
+    </appender>
+
+    <!-- =============== ASYNC WRAPPER =============== -->
+    <appender name="ASYNC_JSON" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="JSON_STDOUT"/>
+        <queueSize>512</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+        <neverBlock>true</neverBlock>
+    </appender>
+
+    <!-- =============== ONLY INFO LOGS =============== -->
+    <root level="INFO">
+        <appender-ref ref="ASYNC_JSON"/>
+    </root>
+
+</configuration>

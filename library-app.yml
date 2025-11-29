@@ -1,0 +1,100 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: library
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: library
+  name: library-env-config
+data:
+  DB_URL: jdbc:mysql://mysql:3306/library?createDatabaseIfNotExist=true&characterEncoding=utf8
+  SERVER_PORT: "8080"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  namespace: library
+  name: library-secret
+type: Opaque
+stringData:
+  DB_USERNAME: root
+  DB_PASSWORD: root
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: library
+  name: library-service
+  labels:
+    library: library-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      library: library-service
+  template:
+    metadata:
+      labels:
+        library: library-service
+    spec:
+      imagePullSecrets:
+        - name: default-secret # remove if using public Docker image
+      containers:
+        - name: library-service
+          image: your-dockerhub-username/library:latest
+          imagePullPolicy: Always
+
+          env:
+            - name: JVM_OPTS
+              value: "-XX:MaxRAMPercentage=80.0"
+          envFrom:
+            - configMapRef:
+                name: library-env-config
+            - secretRef:
+                name: library-secret
+
+          ports:
+            - containerPort: 8080
+
+          resources:
+            requests:
+              cpu: "200m"
+              memory: "512Mi"
+            limits:
+              cpu: "500m"
+              memory: "1Gi"
+
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            failureThreshold: 3
+
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            failureThreshold: 3
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: library
+  name: library-service
+  labels:
+    library: library-service
+spec:
+  type: ClusterIP
+  selector:
+    library: library-service
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+      name: http
