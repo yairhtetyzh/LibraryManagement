@@ -58,7 +58,7 @@ docker build -t library-api:latest .
 docker run -p 8881:8881 \
   -e DATABASE_URL=jdbc:mysql://host.docker.internal:3306/library \
   -e DATABASE_USER=root \
-  -e DATABASE_PASSWORD=password \
+  -e DATABASE_PASSWORD=root \
   library-api:latest
 ```
 
